@@ -43,4 +43,4 @@ ax2.legend()
 ax2.grid(True)
 
 plt.tight_layout()
-plt.savefig('HW1/problem1_plots.pdf')
+plt.savefig('HW1/problem1_plots.png')

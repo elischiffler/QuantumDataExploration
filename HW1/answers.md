@@ -2,13 +2,99 @@
 
 ## Problem 1 – Infinite Square Well
 
-![Problem 1 Plots](problem1_plots.pdf)
+**Python Code:**
+```python
+#  -- Created with AI --
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# constants
+L = 1.0  # Width of the well in nm
+
+# Define the normalized wave function
+def psi(n, x, L):
+    return np.sqrt(2 / L) * np.sin(n * np.pi * x / L)
+
+# Generate an array of x values from 0 to L
+x = np.linspace(0, L, 1000)
+
+# Calculate wave functions for n=1, 2, 3
+psi_1 = psi(1, x, L)
+psi_2 = psi(2, x, L)
+psi_3 = psi(3, x, L)
+
+# Create a figure with two subplots stacked vertically
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 10))
+
+# 1. Plot the wave functions
+ax1.plot(x, psi_1, label=r'$\psi_1(x)$ (n=1)')
+ax1.plot(x, psi_2, label=r'$\psi_2(x)$ (n=2)')
+ax1.plot(x, psi_3, label=r'$\psi_3(x)$ (n=3)')
+ax1.set_title('Wave Functions for an Infinite Square Well')
+ax1.set_xlabel('Position x (nm)')
+ax1.set_ylabel(r'$\psi_n(x)$')
+ax1.axhline(0, color='black', linewidth=0.8, linestyle='--')
+ax1.legend()
+ax1.grid(True)
+
+# 2. Plot the probability densities
+ax2.plot(x, np.abs(psi_1)**2, label=r'$|\psi_1(x)|^2$ (n=1)')
+ax2.plot(x, np.abs(psi_2)**2, label=r'$|\psi_2(x)|^2$ (n=2)')
+ax2.plot(x, np.abs(psi_3)**2, label=r'$|\psi_3(x)|^2$ (n=3)')
+ax2.set_title('Probability Densities for an Infinite Square Well')
+ax2.set_xlabel('Position x (nm)')
+ax2.set_ylabel(r'$|\psi_n(x)|^2$')
+ax2.legend()
+ax2.grid(True)
+
+plt.tight_layout()
+plt.savefig('HW1/problem1_plots.png')
+```
+
+![Problem 1 Plots](problem1_plots.png)
 
 **How does the number of nodes relate to the quantum number $n$?**
 
 A node is basically where the wave function crosses the x-axis. If you look at the graphs, $n=1$ has 0 nodes, $n=2$ has 1 node, and $n=3$ has 2 nodes. So, as the quantum number $n$ goes up, the number of nodes increases linearly. For any $n$, there are exactly $n-1$ nodes inside the well.
 
 ## Problem 2 - Energy Quantization
+
+**Python Code:**
+```python
+#  -- Created with AI --
+
+import numpy as np
+
+# Constants
+h = 6.626e-34     
+hbar = 1.055e-34    
+m_e = 9.11e-31      
+eV_to_J = 1.602e-19 
+c = 3.00e8         
+L = 1.0e-9   
+
+def calc_energy_joules(n):
+    # Formula: E_n = (n^2 * pi^2 * hbar^2) / (2 * m * L^2)
+    return (n**2 * np.pi**2 * hbar**2) / (2 * m_e * L**2)
+
+# 1. Calculate the first three allowed energy levels in eV
+print("--- First Three Allowed Energy Levels ---")
+energies_joules = [calc_energy_joules(n) for n in]
+energies_eV = [e / eV_to_J for e in energies_joules]
+
+for n, energy in zip(, energies_eV):
+    print(f"E_{n} = {energy:.4f} eV")
+
+# 2. Determine the wavelength of the photon emitted during the transition n = 3 -> n = 1
+print("\n--- Wavelength for Transition (n=3 -> n=1) ---")
+delta_E_J = energies_joules - energies_joules
+
+wavelength_m = (h * c) / delta_E_J
+wavelength_nm = wavelength_m * 1e9 # meters -> nanometers
+
+print(f"Wavelength (\u03BB) = {wavelength_nm:.2f} nm")
+```
 
 **Code Output**
 
@@ -26,12 +112,87 @@ In an infinite square well, a particle's energy scales quadratically with $n$ ($
 
 ## Problem 3 – Finite Well Bound States
 
+**Python Code:**
+```python
+#  -- Created with AI -- 
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Constants
+hbar = 1.055e-34
+m_e = 9.11e-31    
+eV_to_J = 1.602e-19
+a = 0.5        
+U0 = 10.0       
+
+# Calculate the kinetic energy coefficient (hbar^2 / 2m) in eV * nm^2
+const = (hbar**2) / (2 * m_e) / eV_to_J * 1e18
+
+# Set up the spatial grid (from -2 nm to 2 nm to see outside the well)
+N = 1000
+L_max = 2.0  
+x = np.linspace(-L_max, L_max, N)
+dx = x - x
+
+# Define the potential V(x)
+V = np.where(np.abs(x) < a, -U0, 0.0)
+
+# Construct the Hamiltonian matrix (H = T + V) using finite difference
+H = np.zeros((N, N))
+for i in range(N):
+    H[i, i] = const * (2.0 / dx**2) + V[i]
+    if i > 0:
+        H[i, i-1] = -const / dx**2
+    if i < N - 1:
+        H[i, i+1] = -const / dx**2
+
+# Solve for eigenvalues and eigenvectors
+energies, wavefunctions = np.linalg.eigh(H)
+
+# Extract and properly normalize the first two bound states
+E1, E2 = energies, energies
+psi1 = wavefunctions[:, 0] / np.sqrt(dx)
+psi2 = wavefunctions[:, 1] / np.sqrt(dx)
+
+print(f"First bound-state energy: {E1:.4f} eV")
+print(f"Second bound-state energy: {E2:.4f} eV")
+
+# Plotting Wave functions and Probability Densities
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 10))
+
+# 1. Wave functions
+ax1.plot(x, psi1, label=rf"$\psi_1(x)$ (E1 = {E1:.2f} eV)")
+ax1.plot(x, psi2, label=rf"$\psi_2(x)$ (E2 = {E2:.2f} eV)")
+ax1.axvline(-a, color='gray', linestyle='--', label='Well Boundaries')
+ax1.axvline(a, color='gray', linestyle='--')
+ax1.axhline(0, color='black', linewidth=0.8)
+ax1.set_title("Finite Well Wave Functions")
+ax1.set_ylabel(r"$\psi(x)$")
+ax1.legend()
+ax1.grid(True)
+
+# 2. Probability Densities
+ax2.plot(x, np.abs(psi1)**2, label=r"$|\psi_1(x)|^2$")
+ax2.plot(x, np.abs(psi2)**2, label=r"$|\psi_2(x)|^2$")
+ax2.axvline(-a, color='gray', linestyle='--')
+ax2.axvline(a, color='gray', linestyle='--')
+ax2.set_title("Finite Well Probability Densities")
+ax2.set_xlabel("Position x (nm)")
+ax2.set_ylabel(r"$|\psi(x)|^2$")
+ax2.legend()
+ax2.grid(True)
+
+plt.tight_layout()
+plt.savefig('HW1/problem3_finite_well_states.png', dpi=300)
+```
+
 **Code Output**
 
 First bound-state energy: -9.7027 eV  
 Second bound-state energy: -8.8151 eV  
 
-![Problem 3 Plots](problem3_finite_well_states.pdf)
+![Problem 3 Plots](problem3_finite_well_states.png)
 
 ## Problem 4 – Infinite vs Finite Well Comparison
 

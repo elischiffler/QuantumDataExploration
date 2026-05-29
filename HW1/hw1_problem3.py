@@ -68,4 +68,4 @@ ax2.legend()
 ax2.grid(True)
 
 plt.tight_layout()
-plt.savefig('HW1/problem3_finite_well_states.pdf')
+plt.savefig('HW1/problem3_finite_well_states.png', dpi=300)
