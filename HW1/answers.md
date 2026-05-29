@@ -2,7 +2,7 @@
 
 ## Problem 1 – Infinite Square Well
 
-![Problem 1 Plots](problem1_combined_plots.pdf)
+![Problem 1 Plots](problem1_plots.pdf)
 
 **How does the number of nodes relate to the quantum number $n$?**
 
